@@ -1,0 +1,54 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #ffffff;
+}
+
+.dark .header {
+  background: #222;
+  color: #e1e3e6;
+}
+
+.user-nickname {
+  font-weight: 600;
+  margin-right: 12px;
+  color: #1890ff;
+  transition: color 0.3s;
+  text-decoration: none;
+}
+
+.user-nickname:hover {
+  text-decoration: underline;
+}
+
+.dark-header .user-nickname {
+  color: #40a9ff;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.btn-container{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.logo {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+}
+
+.auth-button, .theme-toggle-button {
+  color: inherit;
+  align-items: baseline;
+}

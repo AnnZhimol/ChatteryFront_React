@@ -1,0 +1,65 @@
+.dark .chat-settings {
+    background-color: #333;
+    color: white;
+  }
+  
+  .dark .setting-item label,
+  .dark input,
+  .dark button {
+    color: white;
+  }
+  
+  .chat-page {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .chat-settings {
+    width: 20%;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: auto;
+  }
+  
+  .chat-widget {
+    width: 78%;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .setting-item {
+    margin-bottom: 15px;
+  }
+  
+  .setting-item label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .setting-item input,
+  .setting-item select,
+  .setting-item .ant-slider {
+    width: 100%;
+  }
+  
+  .banned-item {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+  }
+  
+  .banned-item svg {
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  
+  .messages-container {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  
