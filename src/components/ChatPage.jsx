@@ -7,8 +7,12 @@ import {banUserService} from "../services/banUserService.js";
 import {banWordService} from "../services/banWordService.js";
 import {settingService} from "../services/settingService.js";
 import {translationService} from "../services/translationService.js";
+import ChatWidget from "./ChatWidget.jsx";
 
 const { Option } = Select;
+const generateWidgetUrl = (translationId) => {
+  return `${window.location.origin}/widget/${translationId}`;
+};
 
 const ChatPage = () => {
   const location = useLocation();
@@ -246,6 +250,14 @@ const ChatPage = () => {
     }
   };
 
+  const [widgetUrl, setWidgetUrl] = useState("");
+
+  useEffect(() => {
+    if (translation) {
+      setWidgetUrl(generateWidgetUrl(translation.id));
+    }
+  }, [translation]);
+
   if (!translation) return <p>Трансляция не выбрана</p>;
 
   return (
@@ -355,6 +367,26 @@ const ChatPage = () => {
         </div>
 
         <div className="setting-item">
+          <label>Ссылка для OBS:</label>
+          <label style={{ color: "grey", fontStyle: "italic" }}>Используйте эту ссылку в OBS Studio как источник "Браузер"</label>
+          <Input
+              value={widgetUrl}
+              readOnly
+              style={{ width: "100%", marginBottom: "10px" }}
+          />
+          <Button
+              type="primary"
+              onClick={() => {
+                navigator.clipboard.writeText(widgetUrl);
+                message.success("Ссылка скопирована в буфер обмена");
+              }}
+              style={{ width: "100%" }}
+          >
+            Скопировать ссылку
+          </Button>
+        </div>
+
+        <div className="setting-item">
           <label>Заблокированные слова:</label>
           <label style={{ color: "grey", fontStyle: "italic" }}>Чтобы сохранить, нажмите ENTER</label>
           <Input
@@ -392,54 +424,22 @@ const ChatPage = () => {
       <div
           className="chat-widget"
           style={{
+            borderRadius: '8px',
             backgroundColor: backgroundColor,
             fontFamily: fontFamily,
             color: textColor,
             fontSize: `${fontSize}px`,
           }}
       >
-        <div className="messages-container" ref={messagesContainerRef}>
-          {messages.map((msg, index) => (
-              <div key={index} className="msg" style={{ textAlign: textAlign }}>
-                {msg.parentUser && msg.parentMessage && (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: textAlign }}>
-                      <div
-                          style={{
-                            width: 0,
-                            height: 0,
-                            borderLeft: '5px solid transparent',
-                            borderRight: '5px solid transparent',
-                            borderTop: `5px solid ${textColor}`,
-                            marginRight: '5px',
-                            color: textColor
-                          }}
-                      />
-                      <div
-                          className="parent-message"
-                          style={{
-                            padding: '5px',
-                            borderRadius: '5px',
-                            fontSize: '0.9em',
-                            color: textColor,
-                            backgroundColor: adjustedBackgroundColor,
-                            textAlign: textAlign
-                          }}
-                      >
-                        <strong>{msg.parentUser}:</strong> {msg.parentMessage}
-                      </div>
-                    </div>
-                )}
-                <div
-                    className="message-content"
-                    style={{
-                      textAlign: textAlign,
-                    }}
-                >
-                  <strong>{msg.user}:</strong> {msg.message}
-                </div>
-              </div>
-          ))}
-        </div>
+        <ChatWidget
+            messages={messages}
+            messagesContainerRef={messagesContainerRef}
+            fontFamily={fontFamily}
+            backgroundColor={backgroundColor}
+            textColor={textColor}
+            fontSize={fontSize}
+            textAlign={textAlign}
+        />
       </div>
     </div>
   );
