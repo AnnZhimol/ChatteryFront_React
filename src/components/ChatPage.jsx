@@ -10,13 +10,14 @@ import {translationService} from "../services/translationService.js";
 import ChatWidget from "./ChatWidget.jsx";
 
 const { Option } = Select;
-const generateWidgetUrl = (translationId) => {
-  return `${window.location.origin}/widget/${translationId}`;
+const generateWidgetUrl = (translationId, filterEnabled) => {
+  return `${window.location.origin}/widget/${translationId}?filter=${filterEnabled ? 'on' : 'off'}`;
 };
 
 const ChatPage = () => {
   const location = useLocation();
   const { translation } = location.state || {};
+  const [filterEnabled, setFilterEnabled] = useState(true);
 
   const [fontFamily, setFontFamily] = useState("Arial");
   const [backgroundColor, setBackgroundColor] = useState("#f0f0f0");
@@ -45,6 +46,17 @@ const ChatPage = () => {
     const brightness = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]);
     return brightness;
   };
+
+  useEffect(() => {
+    const saved = localStorage.getItem('filterEnabled');
+    if (saved !== null) {
+      setFilterEnabled(saved === 'true');
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('filterEnabled', filterEnabled);
+  }, [filterEnabled]);
 
 // Функция для осветления цвета
   const lightenColor = (color, percent) => {
@@ -254,9 +266,9 @@ const ChatPage = () => {
 
   useEffect(() => {
     if (translation) {
-      setWidgetUrl(generateWidgetUrl(translation.id));
+      setWidgetUrl(generateWidgetUrl(translation.id, filterEnabled));
     }
-  }, [translation]);
+  }, [translation, filterEnabled]);
 
   if (!translation) return <p>Трансляция не выбрана</p>;
 
@@ -264,7 +276,16 @@ const ChatPage = () => {
     <div className="chat-page">
       <div className="chat-settings">
         <h2>Настройки чата для трансляции {translation.name}</h2>
-
+        <div className="setting-item">
+          <label>Фильтрация мата:</label>
+          <Button
+              type={filterEnabled ? "danger" : "primary"}
+              onClick={() => setFilterEnabled(!filterEnabled)}
+              style={{ width: "100%" }}
+          >
+            {filterEnabled ? 'Выключить' : 'Включить'}
+          </Button>
+        </div>
         <div className="setting-item">
           <label>Шрифт:</label>
           <Select value={fontFamily} onChange={setFontFamily} style={{ width: "100%" }}>
@@ -439,6 +460,7 @@ const ChatPage = () => {
             textColor={textColor}
             fontSize={fontSize}
             textAlign={textAlign}
+            filterEnabled={filterEnabled}
         />
       </div>
     </div>

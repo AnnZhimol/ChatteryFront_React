@@ -1,4 +1,5 @@
 import "react";
+import {useEffect, useState} from "react";
 
 const ChatWidget = ({
                         messages,
@@ -8,7 +9,37 @@ const ChatWidget = ({
                         textColor,
                         fontSize,
                         textAlign,
+                        filterEnabled
                     }) => {
+    const [swearWords, setSwearWords] = useState([]);
+
+    useEffect(() => {
+        const loadSwearWords = async () => {
+            try {
+                const response = await fetch('/utils/swearwords.txt');
+                const text = await response.text();
+                const words = text.split('\n').map(word => word.trim()).filter(word => word);
+                setSwearWords(words);
+            } catch (error) {
+                console.error("Error loading swear words:", error);
+            }
+        };
+
+        loadSwearWords();
+    }, []);
+
+    const filterSwearWords = (text) => {
+        if (!text || !swearWords.length || !filterEnabled) return text;
+
+        let result = text;
+        swearWords.forEach(word => {
+            const regex = new RegExp(word, 'gi');
+            result = result.replace(regex, match => '*'.repeat(match.length));
+        });
+
+        return result;
+    };
+
     const getBrightness = (color) => {
         const rgb = color.match(/\w\w/g).map((x) => parseInt(x, 16));
         return 0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2];
@@ -171,7 +202,7 @@ const ChatWidget = ({
                                             wordBreak: "break-word",
                                         }}
                                     >
-                                        <strong>{msg.parentUser}:</strong> {msg.parentMessage}
+                                        <strong>{msg.parentUser}:</strong> {filterSwearWords(msg.parentMessage)}
                                     </div>
                                 </div>
                             )}
@@ -184,7 +215,7 @@ const ChatWidget = ({
                             >
                                 {getSentimentIcon(msg.sentimentType)}
                                 {getSentenceTypeIcon(msg.sentenceType)}
-                                <strong>{msg.user}:</strong> {msg.message}
+                                <strong>{msg.user}:</strong> {filterSwearWords(msg.message)}
                             </div>
                         </div>
                     </div>

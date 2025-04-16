@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import { settingService } from "../services/settingService";
 import { banUserService } from "../services/banUserService";
 import { banWordService } from "../services/banWordService";
@@ -8,6 +8,10 @@ import ChatWidget from "./ChatWidget.jsx";
 const ChatWidgetPage = () => {
     const { translationId } = useParams();
     const messagesContainerRef = useRef(null);
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const initialFilter = searchParams.get('filter') !== 'off';
+    const [filterEnabled] = useState(initialFilter);
 
     const [messages, setMessages] = useState([]);
     const [stompClient, setStompClient] = useState(null);
@@ -129,6 +133,7 @@ const ChatWidgetPage = () => {
                 textColor={textColor}
                 fontSize={fontSize}
                 textAlign={textAlign}
+                filterEnabled={filterEnabled}
             />
         </div>
     );
